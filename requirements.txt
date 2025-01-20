@@ -1,0 +1,6 @@
+notebook
+Flask
+PyPDF2
+langchain
+langchain-google-genai
+python-dotenv

@@ -1,0 +1,36 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+}
+.container {
+    text-align: center;
+}
+.options {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+.option-button {
+    width: 200px;
+    height: 200px;
+    font-size: 18px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.option-button:hover {
+    background-color: #45a049;
+}
+.option {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

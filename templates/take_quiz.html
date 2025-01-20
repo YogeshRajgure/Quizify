@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doc2Quiz - Take Quiz</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='take_quiz_style.css') }}">
+</head>
+<body>
+  <h1>Doc2Quiz - Take Quiz</h1>
+
+  {% if quiz %}
+    <form action="{{ url_for('submit_quiz') }}" method="post">
+      {% for q in quiz['questions'] %}
+        <h2>{{ q['question'] }}</h2>
+        <ul>
+          {% for series, option in q['choices'].items() %}
+            <li>
+              <input type="radio" name="{{ series }}" value="{{ option }}">
+              {{ option }}
+            </li>
+          {% endfor %}
+        </ul>
+      {% endfor %}
+      <button type="submit">Submit Quiz</button>
+    </form>
+  {% else %}
+    <p>No quiz data available.</p>
+  {% endif %}
+
+  <script>
+    // Add any JavaScript functionality here (optional)
+  </script>
+</body>
+</html>

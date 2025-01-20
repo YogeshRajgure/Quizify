@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Options</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Quiz Options</h1>
+    <form action="{{ url_for('take_quiz') }}" method="post">
+        <button type="submit" name="choice" value="take-quiz">Take Quiz</button>
+    </form>
+    <form action="{{ url_for('export_google_form') }}" method="post">
+        <button type="submit" name="choice" value="export-google-form">Export to Google Form</button>
+    </form>
+</body>
+</html>

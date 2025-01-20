@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generated Questions</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Generated Multiple-Choice Questions</h1>
+        <ul>
+            {% for question in questions %}
+                <li>
+                    <strong>{{ question.text }}</strong>
+                    <ul>
+                        {% for option in question.options %}
+                            <li>{{ option }}</li>
+                        {% endfor %}
+                    </ul>
+                </li>
+            {% endfor %}
+        </ul>
+        <a href="{{ url_for('index') }}">Back to Upload</a>
+    </div>
+</body>
+</html>

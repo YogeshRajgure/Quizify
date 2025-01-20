@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <title>Upload Document</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Document Uploaded</h1>
+        <form action="{{ url_for('prompt') }}" method="POST">
+            <label for="prompt">Enter your prompt for generating questions:</label>
+            <textarea id="prompt" name="prompt" rows="4" required></textarea>
+            <button type="submit">Generate Questions</button>
+        </form>
+        <a href="{{ url_for('prompt') }}">Go back to upload another document</a>
+    </div>
+</body>
+</html>
