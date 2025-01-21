@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doc2Quiz - Review Questions</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='take_quiz_style.css') }}">
+  <style>
+    .container {
+      display: flex;
+    }
+    .left {
+      width: 60%;
+      padding: 20px;
+    }
+    .right {
+      width: 40%;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>Doc2Quiz - Review Questions</h1>
+
+  {% if quiz %}
+    <div class="container">
+      <div class="left" id="review-container">
+        {% for question in quiz.questions %}
+          <h3>Question {{ loop.index }}: {{ question.question }}</h3>
+          <ul>
+            {% for choice in question.choices %}
+              <li>{{ choice }}{% if choice == question.answer %} (Correct Answer){% endif %}</li>
+            {% endfor %}
+          </ul>
+        {% endfor %}
+      </div>
+      <div class="right">
+        <form action="{{ url_for('export_google_form') }}" method="post">
+          <button type="submit" name="choice" value="export-google-form">Export to Google Form</button>
+        </form>
+      </div>
+    </div>
+  {% else %}
+    <p>No quiz data available.</p>
+  {% endif %}
+</body>
+</html>

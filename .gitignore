@@ -171,4 +171,4 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
-utils/google_forms/credentails.json
+credentials.json

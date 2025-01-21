@@ -2,6 +2,7 @@
 
 This project is a Flask web application that allows users to upload documents and generate multiple-choice questions based on the content of those documents using a language model.
 
+You will need to have credentials.json file as shown below
 ## Project Structure
 
 ```
@@ -16,8 +17,14 @@ flask-web-app
 │   └── js
 │       └── scripts.js     # JavaScript for client-side functionality
 ├── uploads               # Directory for temporarily storing uploaded documents
+├── utils
+│   ├── notebooks
+│   ├── google_forms
+│   │   └── g_forms_api_connectivity.py
+│   └── result.html
 ├── app.py                # Main application file with Flask routes and logic
 ├── requirements.txt      # Lists project dependencies
+├── credentials.json
 └── README.md             # Documentation for the project
 ```
 

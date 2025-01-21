@@ -1,25 +1,23 @@
-from flask import Flask, render_template, request, redirect, url_for, session
 import os
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
-from flask import Flask, render_template, request, jsonify, redirect, url_for
-import os
-from werkzeug.utils import secure_filename
-import PyPDF2
-import docx
-from utils import helper
 from langchain_google_genai import ChatGoogleGenerativeAI
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session
 
-
-
-UPLOAD_FOLDER = 'uploads'
-ALLOWED_EXTENSIONS = {'pdf', 'doc', 'docx', 'txt'}
-MAX_CONTENT_LENGTH = 5 * 1024 * 1024  # 5 MB
+from utils import helper
+from utils.google_forms.g_forms_api_connection import authenticate_google_api, \
+    create_google_form, add_quiz_settings, add_questions, \
+    update_google_form, grant_permissions
 
 
 load_dotenv()
 
 app = Flask(__name__)
+
+
+UPLOAD_FOLDER = 'uploads'
+ALLOWED_EXTENSIONS = {'pdf', 'doc', 'docx', 'txt'}
+MAX_CONTENT_LENGTH = 5 * 1024 * 1024  # 5 MB
 
 app.secret_key = 'super secret key'
 app.config['SESSION_TYPE'] = 'filesystem'
@@ -27,32 +25,12 @@ app.api_secret_key = os.getenv('GEMINI_KEY')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['ALLOWED_EXTENSIONS'] = ALLOWED_EXTENSIONS
 app.config['MAX_CONTENT_LENGTH'] = MAX_CONTENT_LENGTH
+app.config['SHARE_GMAIL'] = 'yogeshrajgure.vraj@gmail.com'
 
 extracted_text = ""
 
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
-
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-def extract_text_from_file(filepath):
-            ext = os.path.splitext(filepath)[1].lower()
-            text = ""
-            if ext == '.txt':
-                with open(filepath, 'r', encoding='utf-8') as file:
-                    text = file.read()
-            elif ext == '.pdf':
-                with open(filepath, 'rb') as file:
-                    reader = PyPDF2.PdfReader(file)
-                    for page_num in range(len(reader.pages)):
-                        page = reader.pages[page_num]
-                        text += page.extract_text()
-            elif ext in ['.doc', '.docx']:
-                doc = docx.Document(filepath)
-                for para in doc.paragraphs:
-                    text += para.text + '\n'
-            return text
 
 @app.route('/')
 def index():
@@ -71,14 +49,14 @@ def upload_file():
     if file.filename == '':
         return jsonify({"error": "No selected file"}), 400
 
-    if file and allowed_file(file.filename):
+    if file and helper.allowed_file(file.filename, app.config['ALLOWED_EXTENSIONS']):
         filename = secure_filename(file.filename)
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(filepath)
 
         # Extract text from the uploaded document
         global extracted_text
-        extracted_text = extract_text_from_file(filepath)
+        extracted_text = helper.extract_text_from_file(filepath)
 
         # Delete the file from the saved path
         os.remove(filepath)
@@ -104,7 +82,6 @@ def generate_quiz():
             api_key=app.api_secret_key
         )
 
-
         messages = [
             (
                 "system",
@@ -114,11 +91,11 @@ def generate_quiz():
         ]
 
         # Initialize LangChain with the prompt and LLM
-        # ai_msg = llm.invoke(messages)
+        ai_msg = llm.invoke(messages)
 
-        # # Run the chain with the document text
-        # quiz_json = eval(ai_msg.content)
-        quiz_json = helper.dummy_output
+        # Run the chain with the document text
+        quiz_json = eval(ai_msg.content)
+        # quiz_json = helper.dummy_output
         print(quiz_json)
 
         # Store quiz_json in session
@@ -144,24 +121,51 @@ def quiz_options():
 
 @app.route('/take-quiz', methods=['POST', 'GET'])
 def take_quiz():
-
     return render_template('take_quiz.html', quiz=session['quiz_json'])
 
-@app.route('/export-google-form')
+@app.route('/review_questions')
+def review_questions():
+    return render_template('review_questions.html', quiz=session['quiz_json'])
+
+@app.route('/export-google-form', methods=['GET', 'POST'])
 def export_google_form():
-    global quiz_json
-    # Logic to export quiz_json to Google Forms API can be added here
-    return "Export to Google Forms feature is under construction."
+    try:
+        # call function to export quiz_json to Google Forms API
+        service = authenticate_google_api()
+        if not service:
+            raise Exception("Failed to authenticate Google API")
+
+        form_id = create_google_form(service, session['quiz_json']["title"])
+        if not form_id:
+            raise Exception("Failed to create Google Form")
+        requests = []
+        requests = add_quiz_settings(requests)
+        if 'quiz_json' in session and 'questions' in session['quiz_json'] and isinstance(session['quiz_json']['questions'], list):
+            requests = add_questions(requests, session['quiz_json']['questions'])
+        else:
+            return jsonify({"error": "Invalid quiz data"}), 400
+
+        if update_google_form(service, form_id, requests):
+            if grant_permissions(service, form_id, app.config['SHARE_GMAIL']):
+                session['google_form_link'] = f"https://docs.google.com/forms/d/{form_id}"
+
+        # Logic to export quiz_json to Google Forms API can be added here
+        return render_template('export_google_form.html', form_link=session['google_form_link'])
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
+
 
 @app.route('/submit-quiz', methods=['POST', 'GET'])
 def submit_quiz():
-
     return render_template('index.html')
 
 
 def generate_questions_from_document(filename, prompt):
     # Simulated question generation logic
     return [f"Question {i+1} based on {filename}" for i in range(10)]
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

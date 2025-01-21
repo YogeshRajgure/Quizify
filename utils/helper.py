@@ -1,3 +1,6 @@
+import os
+import docx
+import PyPDF2
 
 
 llm_prompt = """
@@ -6,16 +9,17 @@ Based on the text provided by user, create a JSON object with 10 multiple-choice
 each having 4 options and one correct answer.
 Output format:
 {
+    "title": "Quiz Title",
     "questions": [
         {
             "question": "What is the capital of France?",
-            "choices": {
-                "a": "Paris",
-                "b": "London",
-                "c": "Berlin",
-                "d": "Madrid"
-            },
-            "answer": "a"
+            "choices": [
+                "Paris",
+                "London",
+                "Berlin",
+                "Madrid"
+            ],
+            "answer": "Paris"
         },
     ]
 }
@@ -27,104 +31,128 @@ dummy_output = """
   "questions": [
     {
       "question": "What is Yogesh Rajgure's email address?",
-      "choices": {
-        "a": "yogeshrajgure@gmail.com",
-        "b": "yogeshrajgure.vraj@gmail.com",
-        "c": "rajgureyogesh@gmail.com",
-        "d": "vraj.yogeshrajgure@gmail.com"
-      },
-      "answer": "b"
+      "choices": [
+        "yogeshrajgure@gmail.com",
+        "yogeshrajgure.vraj@gmail.com",
+        "rajgureyogesh@gmail.com",
+        "vraj.yogeshrajgure@gmail.com"
+      ],
+      "answer": "yogeshrajgure.vraj@gmail.com"
     },
     {
       "question": "In which city does Yogesh Rajgure currently work?",
-      "choices": {
-        "a": "Bengaluru",
-        "b": "Mumbai",
-        "c": "Pune",
-        "d": "Delhi"
-      },
-      "answer": "c"
+      "choices": [
+        "Bengaluru",
+        "Mumbai",
+        "Pune",
+        "Delhi"
+      ],
+      "answer": "Pune"
     },
-    {
-      "question": "What was the percentage increase in model accuracy for predicting CLTV achieved by Yogesh?",
-      "choices": {
-        "a": "5%",
-        "b": "10%",
-        "c": "15%",
-        "d": "20%"
-      },
-      "answer": "b"
-    },
-    {
-      "question": "What model did Yogesh use to predict upcoming defects in a system at Intelliswift, achieving ~93% accuracy?",
-      "choices": {
-        "a": "XGBoost",
-        "b": "Random Forest",
-        "c": "Logistic Regression",
-        "d": "Support Vector Machine"
-      },
-      "answer": "b"
-    },
-    {
-      "question": "By how much did Yogesh improve cost efficiency at Intelliswift by leveraging dbt code optimization and AWS Lambda function code optimization?",
-      "choices": {
-        "a": "5%",
-        "b": "10%",
-        "c": "15%",
-        "d": "20%"
-      },
-      "answer": "c"
-    },
-    {
-      "question": "Which university did Yogesh Rajgure attend for his Bachelor of Engineering?",
-      "choices": {
-        "a": "IIT Bombay",
-        "b": "BITS Pilani",
-        "c": "D. Y. Patil Institute of Engineering and Technology",
-        "d": "College of Engineering, Pune"
-      },
-      "answer": "c"
-    },
-    {
-      "question": "What programming language did Yogesh use to automate model creation at ResoluteAI.in, reducing development time by 50%?",
-      "choices": {
-        "a": "Java",
-        "b": "C++",
-        "c": "Python",
-        "d": "R"
-      },
-      "answer": "c"
-    },
-    {
-      "question": "Which cloud platform did Yogesh use for the Real-Time Sales Data Dashboard project?",
-      "choices": {
-        "a": "AWS",
-        "b": "Azure",
-        "c": "GCP",
-        "d": "Snowflake"
-      },
-      "answer": "d"
-    },
-    {
-      "question": "Which machine learning model did Yogesh use in his Covid-19 Health Risk Prediction project?",
-      "choices": {
-        "a": "Logistic Regression",
-        "b": "Support Vector Machine",
-        "c": "Random Forest Classifier",
-        "d": "Naive Bayes"
-      },
-      "answer": "c"
-    },
-    {
-      "question": "Which framework did Yogesh use for building the web application in his Covid-19 Health Risk Prediction project?",
-      "choices": {
-        "a": "React",
-        "b": "Angular",
-        "c": "Django",
-        "d": "Flask"
-      },
-      "answer": "d"
-    }
   ]
 }"""
+    # {
+    #   "question": "What was the percentage increase in model accuracy for predicting CLTV achieved by Yogesh?",
+    #   "choices": [
+    #     "5%",
+    #     "10%",
+    #     "15%",
+    #     "20%"
+    #   ],
+    #   "answer": "10%"
+    # },
+    # {
+    #   "question": "What model did Yogesh use to predict upcoming defects in a system at Intelliswift, achieving ~93% accuracy?",
+    #   "choices": [
+    #     "XGBoost",
+    #     "Random Forest",
+    #     "Logistic Regression",
+    #     "Support Vector Machine"
+    #   ],
+    #   "answer": "Random Forest"
+    # },
+    # {
+    #   "question": "By how much did Yogesh improve cost efficiency at Intelliswift by leveraging dbt code optimization and AWS Lambda function code optimization?",
+    #   "choices": [
+    #     "5%",
+    #     "10%",
+    #     "15%",
+    #     "20%"
+    #   ],
+    #   "answer": "15%"
+    # },
+    # {
+    #   "question": "Which university did Yogesh Rajgure attend for his Bachelor of Engineering?",
+    #   "choices": [
+    #     "IIT Bombay",
+    #     "BITS Pilani",
+    #     "D. Y. Patil Institute of Engineering and Technology",
+    #     "College of Engineering, Pune"
+    #   ],
+    #   "answer": "D. Y. Patil Institute of Engineering and Technology"
+    # },
+    # {
+    #   "question": "What programming language did Yogesh use to automate model creation at ResoluteAI.in, reducing development time by 50%?",
+    #   "choices": [
+    #     "Java",
+    #     "C++",
+    #     "Python",
+    #     "R"
+    #   ],
+    #   "answer": "Python"
+    # },
+    # {
+    #   "question": "Which cloud platform did Yogesh use for the Real-Time Sales Data Dashboard project?",
+    #   "choices": [
+    #     "AWS",
+    #     "Azure",
+    #     "GCP",
+    #     "Snowflake"
+    #   ],
+    #   "answer": "Snowflake"
+    # },
+    # {
+    #   "question": "Which machine learning model did Yogesh use in his Covid-19 Health Risk Prediction project?",
+    #   "choices": [
+    #     "Logistic Regression",
+    #     "Support Vector Machine",
+    #     "Random Forest Classifier",
+    #     "Naive Bayes"
+    #   ],
+    #   "answer": "Random Forest Classifier"
+    # },
+    # {
+    #   "question": "Which framework did Yogesh use for building the web application in his Covid-19 Health Risk Prediction project?",
+    #   "choices": [
+    #     "React",
+    #     "Angular",
+    #     "Django",
+    #     "Flask"
+    #   ],
+    #   "answer": "Flask"
+    # }
+#   ]
+# }"""
 dummy_output = eval(dummy_output)
+
+
+def allowed_file(filename, ALLOWED_EXTENSIONS):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def extract_text_from_file(filepath):
+            ext = os.path.splitext(filepath)[1].lower()
+            text = ""
+            if ext == '.txt':
+                with open(filepath, 'r', encoding='utf-8') as file:
+                    text = file.read()
+            elif ext == '.pdf':
+                with open(filepath, 'rb') as file:
+                    reader = PyPDF2.PdfReader(file)
+                    for page_num in range(len(reader.pages)):
+                        page = reader.pages[page_num]
+                        text += page.extract_text()
+            elif ext in ['.doc', '.docx']:
+                doc = docx.Document(filepath)
+                for para in doc.paragraphs:
+                    text += para.text + '\n'
+            return text
