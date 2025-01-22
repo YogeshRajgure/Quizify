@@ -38,12 +38,6 @@ def index():
 
 @app.route('/docs2Quiz', methods=['POST', 'GET'])
 def docs2Quiz():
-    session['which_prompt'] = helper.llm_prompt_for_docs_quiz
-    return render_template('docs2Quiz.html')
-
-@app.route('/interQuiz', methods=['POST', 'GET'])
-def interQuiz():
-    session['which_prompt'] = helper.llm_prompt_for_interview_quiz
     return render_template('docs2Quiz.html')
 
 @app.route('/upload', methods=['POST'])
@@ -87,22 +81,21 @@ def generate_quiz():
             max_retries=2,
             api_key=app.api_secret_key
         )
-        print(session['which_prompt'])
 
         messages = [
             (
                 "system",
-                session['which_prompt'],
+                helper.llm_prompt,
             ),
             ("human", extracted_text),
         ]
 
-        # Initialize LangChain with the prompt and LLM
-        ai_msg = llm.invoke(messages)
+        # # Initialize LangChain with the prompt and LLM
+        # ai_msg = llm.invoke(messages)
 
-        # Run the chain with the document text
-        quiz_json = eval(ai_msg.content)
-        # quiz_json = helper.dummy_output
+        # # Run the chain with the document text
+        # quiz_json = eval(ai_msg.content)
+        quiz_json = helper.dummy_output
         print(quiz_json)
 
         # Store quiz_json in session
@@ -138,24 +131,24 @@ def review_questions():
 def export_google_form():
     try:
         # call function to export quiz_json to Google Forms API
-        service = authenticate_google_api()
-        if not service:
-            raise Exception("Failed to authenticate Google API")
+        # service = authenticate_google_api()
+        # if not service:
+        #     raise Exception("Failed to authenticate Google API")
 
-        form_id = create_google_form(service, session['quiz_json']["title"])
-        if not form_id:
-            raise Exception("Failed to create Google Form")
-        requests = []
-        requests = add_quiz_settings(requests)
-        if 'quiz_json' in session and 'questions' in session['quiz_json'] and isinstance(session['quiz_json']['questions'], list):
-            requests = add_questions(requests, session['quiz_json']['questions'])
-        else:
-            return jsonify({"error": "Invalid quiz data"}), 400
+        # form_id = create_google_form(service, session['quiz_json']["title"])
+        # if not form_id:
+        #     raise Exception("Failed to create Google Form")
+        # requests = []
+        # requests = add_quiz_settings(requests)
+        # if 'quiz_json' in session and 'questions' in session['quiz_json'] and isinstance(session['quiz_json']['questions'], list):
+        #     requests = add_questions(requests, session['quiz_json']['questions'])
+        # else:
+        #     return jsonify({"error": "Invalid quiz data"}), 400
 
-        if update_google_form(service, form_id, requests):
-            if grant_permissions(service, form_id, app.config['SHARE_GMAIL']):
-                session['google_form_link'] = f"https://docs.google.com/forms/d/{form_id}"
-
+        # if update_google_form(service, form_id, requests):
+        #     if grant_permissions(service, form_id, app.config['SHARE_GMAIL']):
+        #         session['google_form_link'] = f"https://docs.google.com/forms/d/{form_id}"
+        session['google_form_link'] = f"https://docs.google.com/forms/d/1FAIpQLSf1"
         # Logic to export quiz_json to Google Forms API can be added here
         return render_template('export_google_form.html', form_link=session['google_form_link'])
     except Exception as e:

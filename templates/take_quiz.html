@@ -1,27 +1,31 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Doc2Quiz - Take Quiz</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='/css/take_quiz_style.css') }}">
-</head>
-<body>
-  <h1>Doc2Quiz - Take Quiz</h1>
+{% extends "base.html" %}
 
-  {% if quiz %}
-    <div id="quiz-container">
-      <form id="quiz-form">
-        <h2 id="question"></h2>
-        <ul id="choices"></ul>
-        <button type="button" id="submit-answer">Submit Answer</button>
-        <button type="button" id="next-question" style="display:none;">Next Question</button>
-      </form>
-      <p id="result" style="display:none;"></p>
+{% block headerr %}
+<title>Docs2Quiz - Take Quiz</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/take_quiz_style.css') }}">
+{% endblock %}
+
+{% block content %}
+  <h1>Quiz Questions</h1>
+
+  <div class="container">
+    <div class="card">
+
+      {% if quiz %}
+        <div id="quiz-container">
+          <form id="quiz-form">
+            <h2 id="question" class="question"></h2>
+            <ul id="choices"></ul>
+            <button type="button" id="submit-answer">Submit Answer</button>
+            <button type="button" id="next-question" style="display:none;">Next Question</button>
+          </form>
+          <p id="result" style="display:none;"></p>
+        </div>
+      {% else %}
+        <p>No quiz data available.</p>
+      {% endif %}
     </div>
-  {% else %}
-    <p>No quiz data available.</p>
-  {% endif %}
+  </div>
 
   <script>
     const quiz = {{ quiz|tojson }};
@@ -68,9 +72,9 @@
       document.getElementById('question').innerText = question.question;
       const choicesContainer = document.getElementById('choices');
       choicesContainer.innerHTML = '';
-      for (const [series, option] of Object.entries(question.choices)) {
+      for (const [index, option] of Object.entries(question.choices)) {
         const li = document.createElement('li');
-        li.innerHTML = `<input type="radio" name="choice" value="${option}"> ${option}`;
+        li.innerHTML = `<label><input type="radio" name="choice" value="${option}"> ${option}</label>`;
         choicesContainer.appendChild(li);
       }
     }
@@ -91,5 +95,5 @@
       });
     }
   </script>
-</body>
-</html>
+{% endblock %}
+

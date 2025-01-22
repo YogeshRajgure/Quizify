@@ -1,12 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doc2Quiz</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block headerr %}
+<title>Docs2Quiz - Upload file</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/docs2Quiz_style.css') }}">
+{% endblock %}
+
+{% block content %}
     <div class="container">
         <div class="upload-section">
             <h2>Upload your file</h2>
@@ -20,6 +19,7 @@
 
         <div class="quiz-section">
             <button id="generate-quiz-btn" disabled>Generate Quiz</button>
+            <div class="spinner" id="spinner"></div>
         </div>
     </div>
 
@@ -27,6 +27,7 @@
         const form = document.getElementById('upload-form');
         const uploadStatus = document.getElementById('upload-status');
         const generateQuizBtn = document.getElementById('generate-quiz-btn');
+        const spinner = document.getElementById('spinner');
 
         form.addEventListener('submit', async (event) => {
             event.preventDefault();
@@ -49,7 +50,13 @@
             }
         });
 
-        generateQuizBtn.addEventListener('click', async () => {
+        generateQuizBtn.addEventListener('click', async() => {
+            spinner.style.display = 'block';
+            generateQuizBtn.disabled = true;
+            setTimeout(() => {
+                spinner.style.display = 'none';
+                generateQuizBtn.disabled = false;
+            }, 100000);
             const response = await fetch('/generate-quiz', {
                 method: 'POST'
             });
@@ -61,5 +68,4 @@
             }
         });
     </script>
-</body>
-</html>
+{% endblock %}

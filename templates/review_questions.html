@@ -1,29 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Doc2Quiz - Review Questions</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='take_quiz_style.css') }}">
-  <style>
-    .container {
-      display: flex;
-    }
-    .left {
-      width: 60%;
-      padding: 20px;
-    }
-    .right {
-      width: 40%;
-      padding: 20px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-  </style>
-</head>
-<body>
-  <h1>Doc2Quiz - Review Questions</h1>
+{% extends "base.html" %}
+
+{% block headerr %}
+  <title>Docs2Quiz - Review Questions</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/review_questions_style.css') }}">
+{% endblock %}
+
+{% block content %}
+  <h1>Docs2Quiz - Review Questions</h1>
 
   {% if quiz %}
     <div class="container">
@@ -32,7 +15,7 @@
           <h3>Question {{ loop.index }}: {{ question.question }}</h3>
           <ul>
             {% for choice in question.choices %}
-              <li>{{ choice }}{% if choice == question.answer %} (Correct Answer){% endif %}</li>
+              <li>{{ choice }}{% if choice == question.answer %}  (Correct Answer){% endif %}</li>
             {% endfor %}
           </ul>
         {% endfor %}
@@ -46,5 +29,5 @@
   {% else %}
     <p>No quiz data available.</p>
   {% endif %}
-</body>
-</html>
+
+{% endblock %}

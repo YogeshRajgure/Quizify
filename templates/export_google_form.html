@@ -1,13 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Export Google Form</title>
-</head>
-<body>
-    <h1>Export Google Form</h1>
-    <p>Click the link below to export your Google Form:</p>
-    <a href="{{ form_link }}" target="_blank">{{ form_link }}</a>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block headerr %}
+  <title>Docs2Quiz - Export to G-Form</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/export_google_form_style.css') }}">
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Export to Google Form</h1>
+        <p>Click the link below to export your Google Form:</p>
+        <a class="ac" href="{{ form_link }}" target="_blank">{{ form_link }}</a>
+    </div>
+{% endblock %}

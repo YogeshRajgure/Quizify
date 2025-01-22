@@ -3,7 +3,30 @@ import docx
 import PyPDF2
 
 
-llm_prompt = """
+llm_prompt_for_interview_quiz = """
+You are an assistant that generates interview quiz questions from resume or job description provided by the user to test their knowledge on those skills.
+Based on the text provided by user, create a JSON object with 10 multiple-choice questions to test the user for their skills,
+each having 4 options and one correct answer.
+Output format:
+{
+    "title": "Quiz Title",
+    "questions": [
+        {
+            "question": "What is the capital of France?",
+            "choices": [
+                "Paris",
+                "London",
+                "Berlin",
+                "Madrid"
+            ],
+            "answer": "Paris"
+        },
+    ]
+}
+do not format as ```json\n{ }```
+"""
+
+llm_prompt_for_docs_quiz = """
 You are an assistant that generates quiz questions from text provided by user.
 Based on the text provided by user, create a JSON object with 10 multiple-choice questions,
 each having 4 options and one correct answer.

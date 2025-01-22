@@ -51,35 +51,25 @@ h1 {
     margin-bottom: 20px;
 }
 
-.options {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 20px;
+p {
+    color: #666;
+    font-size: 16px;
+    margin-bottom: 20px;
 }
 
-.option {
-    flex: 1;
+.ac {
+    color: #6200ea;
+    font-size: 18px;
+    text-decoration: none;
+    border: 2px solid #6200ea;
+    padding: 10px 20px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.option-button {
+.ac:hover {
     background-color: #6200ea;
     color: white;
-    border: none;
-    padding: 30px 30px;
-    font-size: 18px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    width: 200px;
-    height: 200px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.option-button:hover {
-    background-color: #3700b3;
 }
 
 .footer {
