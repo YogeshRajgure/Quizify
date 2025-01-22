@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block headerr %}
+<title>Quizify</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Choose Quizify's Service</h1>
+
+    <div class="options">
+        <div class="option">
+            <a href="/docs2Quiz">
+                <button class="option-button">Docs 2 Quiz</button>
+            </a>
+        </div>
+        <div class="option">
+            <a href="/interQuiz">
+                <button class="option-button">Interview Quiz</button>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

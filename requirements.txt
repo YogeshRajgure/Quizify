@@ -1,0 +1,9 @@
+notebook
+Flask
+PyPDF2
+langchain
+langchain-google-genai
+python-dotenv
+google-api-python-client
+google-auth-httplib2
+google-auth-oauthlib

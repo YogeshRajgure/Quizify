@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block headerr %}
+<title>Docs2Quiz - Take Quiz</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/take_quiz_style.css') }}">
+{% endblock %}
+
+{% block content %}
+  <h1>Quiz Questions</h1>
+
+  <div class="container">
+    <div class="card">
+
+      {% if quiz %}
+        <div id="quiz-container">
+          <form id="quiz-form">
+            <h2 id="question" class="question"></h2>
+            <ul id="choices"></ul>
+            <button type="button" id="submit-answer">Submit Answer</button>
+            <button type="button" id="next-question" style="display:none;">Next Question</button>
+          </form>
+          <p id="result" style="display:none;"></p>
+        </div>
+      {% else %}
+        <p>No quiz data available.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <script>
+    const quiz = {{ quiz|tojson }};
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      showQuestion();
+
+      document.getElementById('submit-answer').addEventListener('click', () => {
+        const selectedOption = document.querySelector('input[name="choice"]:checked');
+        if (selectedOption) {
+          const answer = selectedOption.value;
+          const correctAnswer = quiz.questions[currentQuestionIndex].answer;
+          if (answer === correctAnswer) {
+            score++;
+            document.getElementById('result').innerText = 'Correct!';
+          } else {
+            document.getElementById('result').innerText = 'Incorrect!';
+          }
+          document.getElementById('result').style.display = 'block';
+          document.getElementById('submit-answer').style.display = 'none';
+          document.getElementById('next-question').style.display = 'inline';
+        } else {
+          alert('Please select an option.');
+        }
+      });
+
+      document.getElementById('next-question').addEventListener('click', () => {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < quiz.questions.length) {
+          showQuestion();
+          document.getElementById('result').style.display = 'none';
+          document.getElementById('submit-answer').style.display = 'inline';
+          document.getElementById('next-question').style.display = 'none';
+        } else {
+          showFinalResult();
+        }
+      });
+    });
+
+    function showQuestion() {
+      const question = quiz.questions[currentQuestionIndex];
+      document.getElementById('question').innerText = question.question;
+      const choicesContainer = document.getElementById('choices');
+      choicesContainer.innerHTML = '';
+      for (const [index, option] of Object.entries(question.choices)) {
+        const li = document.createElement('li');
+        li.innerHTML = `<label><input type="radio" name="choice" value="${option}"> ${option}</label>`;
+        choicesContainer.appendChild(li);
+      }
+    }
+
+    function showFinalResult() {
+      document.getElementById('quiz-container').innerHTML = `
+        <h2>Your score: ${score} / ${quiz.questions.length}</h2>
+        <button type="button" id="go-home">Go Home</button>
+        <button type="button" id="review-questions">Review Questions</button>
+      `;
+
+      document.getElementById('go-home').addEventListener('click', () => {
+        window.location.href = '/';
+      });
+
+      document.getElementById('review-questions').addEventListener('click', () => {
+        window.location.href = '/review_questions';
+      });
+    }
+  </script>
+{% endblock %}
+
