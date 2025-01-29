@@ -12,6 +12,13 @@
             <form id="upload-form" method="POST" enctype="multipart/form-data" action="/upload">
                 <input type="file" name="file" id="file" accept=".pdf,.doc,.docx,.txt" required>
                 <p class="file-info">Max file size: 5 MB</p>
+                <label for="model">Select Model:</label>
+                <select name="model" id="model" required>
+                    <option value="gemini-1.5-flash">gemini-1.5-flash</option>
+                    <option value="deepseek-r1:1.5b">deepseek-r1:1.5b</option>
+                    <option value="deepseek-r1:7b">deepseek-r1:7b</option>
+                    <option value="model3">Model 3</option>
+                </select>
                 <button type="submit" id="upload-btn">Upload</button>
             </form>
             <div id="upload-status"></div>
@@ -34,6 +41,7 @@
             const fileInput = document.getElementById('file');
             const formData = new FormData();
             formData.append('file', fileInput.files[0]);
+            formData.append('model', document.getElementById('model').value);
 
             uploadStatus.textContent = "Uploading...";
 

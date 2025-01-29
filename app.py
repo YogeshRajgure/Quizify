@@ -1,13 +1,13 @@
 import os
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
-from langchain_google_genai import ChatGoogleGenerativeAI
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session
 
 from utils import helper
 from utils.google_forms.g_forms_api_connection import authenticate_google_api, \
     create_google_form, add_quiz_settings, add_questions, \
     update_google_form, grant_permissions
+from utils.llm import get_response_from_llm
 
 
 load_dotenv()
@@ -50,8 +50,12 @@ def interQuiz():
 def upload_file():
     if 'file' not in request.files:
         return jsonify({"error": "No file part"}), 400
+    if 'model' not in request.form:
+        return jsonify({"error": "No model part"}), 400
 
     file = request.files['file']
+    model = request.form['model']
+    session['which_model'] = model
     if file.filename == '':
         return jsonify({"error": "No selected file"}), 400
 
@@ -79,34 +83,10 @@ def generate_quiz():
         if not extracted_text:
             return jsonify({"error": "No document text provided"}), 400
 
-        llm = ChatGoogleGenerativeAI(
-            model="gemini-1.5-pro",
-            temperature=0,
-            max_tokens=None,
-            timeout=None,
-            max_retries=2,
-            api_key=app.api_secret_key
-        )
-        print(session['which_prompt'])
-
-        messages = [
-            (
-                "system",
-                session['which_prompt'],
-            ),
-            ("human", extracted_text),
-        ]
-
-        # Initialize LangChain with the prompt and LLM
-        ai_msg = llm.invoke(messages)
-
-        # Run the chain with the document text
-        quiz_json = eval(ai_msg.content)
-        # quiz_json = helper.dummy_output
-        print(quiz_json)
-
+        session['quiz_json'] = get_response_from_llm(session['which_model'], session['which_prompt'],
+                                                     extracted_text, app.api_secret_key)
         # Store quiz_json in session
-        session['quiz_json'] = quiz_json
+        # session['quiz_json'] = quiz_json
 
         return redirect(url_for('quiz_options'))
 

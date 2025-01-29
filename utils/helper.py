@@ -29,7 +29,7 @@ do not format as ```json\n{ }```
 llm_prompt_for_docs_quiz = """
 You are an assistant that generates quiz questions from text provided by user.
 Based on the text provided by user, create a JSON object with 10 multiple-choice questions,
-each having 4 options and one correct answer.
+each having strictly 4 options and one correct answer. Do not include anycomments in json.
 Output format:
 {
     "title": "Quiz Title",

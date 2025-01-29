@@ -3,6 +3,13 @@
 This project is a Flask web application that allows users to upload documents and generate multiple-choice questions based on the content of those documents using a language model.
 
 You will need to have credentials.json file as shown below
+
+## Download Ollama models for running offline
+```powershell
+ollama run deepseek-r1:1.5b
+ollama run deepseek-r1:7b
+```
+
 ## Project Structure
 
 ```
@@ -32,7 +39,7 @@ flask-web-app
 
 1. **Clone the repository:**
    ```
-   git clone <repository-url>
+   git clone https://github.com/YogeshRajgure/Quizify.git
    cd flask-web-app
    ```
 
