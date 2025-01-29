@@ -28,6 +28,11 @@ app.config['MAX_CONTENT_LENGTH'] = MAX_CONTENT_LENGTH
 app.config['SHARE_GMAIL'] = 'yogeshrajgure.vraj@gmail.com'
 
 extracted_text = ""
+models = [
+    "gemini-1.5-flash",
+    "deepseek-r1:1.5b",
+    "deepseek-r1:7b",
+]
 
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
@@ -39,7 +44,7 @@ def index():
 @app.route('/docs2Quiz', methods=['POST', 'GET'])
 def docs2Quiz():
     session['which_prompt'] = helper.llm_prompt_for_docs_quiz
-    return render_template('docs2Quiz.html')
+    return render_template('docs2Quiz.html', models=models)
 
 @app.route('/interQuiz', methods=['POST', 'GET'])
 def interQuiz():

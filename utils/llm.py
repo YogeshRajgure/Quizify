@@ -5,7 +5,6 @@ import time
 
 
 def get_response_from_llm(which_model, which_prompt, extracted_text, api_secret_key=None):
-    # Initialize the model
 
     # use switch statement
     match which_model.lower():
